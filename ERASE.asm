@@ -1,0 +1,20 @@
+ERASE  	MACRO
+        PAINT_PIXEL  BLACK
+        INC         CX
+        PAINT_PIXEL  BLACK
+        INC         DX
+        PAINT_PIXEL  BLACK
+        DEC         DX 
+        DEC         DX         
+        PAINT_PIXEL  BLACK
+        DEC         CX
+        PAINT_PIXEL  BLACK
+        DEC         CX
+        PAINT_PIXEL  BLACK
+        INC         DX         
+        PAINT_PIXEL  BLACK
+        INC         DX         
+        PAINT_PIXEL  BLACK
+        INC         CX         
+        PAINT_PIXEL  BLACK
+ENDM

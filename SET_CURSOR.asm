@@ -1,0 +1,7 @@
+SET_CURSOR	MACRO	ROW, COL
+			MOV		DH, ROW
+			MOV		DL, COL
+			MOV		BH, 0
+			MOV		AH, 2
+			INT		10H
+ENDM

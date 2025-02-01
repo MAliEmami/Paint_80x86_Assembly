@@ -1,99 +1,12 @@
-;MACROS
-ERASE  	MACRO
-        PAINT_PIXEL  BLACK
-        INC         CX
-        PAINT_PIXEL  BLACK
-        INC         DX
-        PAINT_PIXEL  BLACK
-        DEC         DX 
-        DEC         DX         
-        PAINT_PIXEL  BLACK
-        DEC         CX
-        PAINT_PIXEL  BLACK
-        DEC         CX
-        PAINT_PIXEL  BLACK
-        INC         DX         
-        PAINT_PIXEL  BLACK
-        INC         DX         
-        PAINT_PIXEL  BLACK
-        INC         CX         
-        PAINT_PIXEL  BLACK
-ENDM
-;_____________________________________________________
-PAINT_PIXEL MACRO COLOR	
-			MOV AH,0CH
-			MOV AL,COLOR
-			INT 10H
-ENDM
-;_____________________________________________________
-COLOR_BAR  MACRO   COLOR, START_COL
-			LOCAL   COL_LOOP, ROW_LOOP
-			MOV     CX, START_COL + COLOR_MRGIN
-			COL_LOOP:
-				MOV     DX, COLOR_MRGIN
-				ROW_LOOP:
-					PAINT_PIXEL  COLOR
-					INC     DX
-					CMP     DX, COLOR_SIZE + COLOR_MRGIN
-					JB      ROW_LOOP
-
-					INC     CX
-					CMP     CX, COLOR_SIZE + START_COL + COLOR_MRGIN
-					JB      COL_LOOP
-ENDM
-;_____________________________________________________
-SET_COLOR    MACRO
-			LOCAL   SET_WHITE, SET_BLUE, SET_GREEN, SET_RED, END_CHOOSE
-			CMP 	DX, COLOR_MRGIN + COLOR_SIZE
-			JA 		END_CHOOSE
-				CMP     CX, COLOR_MRGIN + WHITE_COL + COLOR_SIZE
-				JB      SET_WHITE
-				CMP     CX, RED_COL + COLOR_MRGIN + COLOR_SIZE
-				JB      SET_RED
-				CMP     CX, GREEN_COL + COLOR_MRGIN + COLOR_SIZE
-				JB      SET_GREEN
-				CMP     CX, BLUE_COL + COLOR_MRGIN + COLOR_SIZE
-				JB      SET_BLUE
-				JMP     END_CHOOSE
-				
-				SET_WHITE:
-					MOV     PENCIL, WHITE
-					JMP     END_CHOOSE
-				SET_BLUE:
-					MOV     PENCIL, BLUE
-					JMP     END_CHOOSE
-				SET_GREEN:
-					MOV     PENCIL, GREEN
-					JMP     END_CHOOSE
-				SET_RED:
-					MOV     PENCIL, RED
-			END_CHOOSE:
-ENDM
-;_____________________________________________________
-SET_CURSOR	MACRO	ROW, COL
-			MOV		DH, ROW
-			MOV		DL, COL
-			MOV		BH, 0
-			MOV		AH, 2
-			INT		10H
-			ENDM
-;_____________________________________________________
-SET_VIDEO_MODE	MACRO
-				MOV		AX, 0012H
-				INT		10H
-				ENDM
-;_____________________________________________________
-SET_BACKGROUND_WHITE MACRO
-	MOV AH,0B
-	MOV BH,0
-	MOV BL,WHITE
-	INT 10H
-	INT 3H
-	ENDM
-;_____________________________________________________
-
-
-
+INCLUDE	"./ERASE.asm"
+INCLUDE	"./COLOR_BAR.asm"
+INCLUDE	"./PAINT_PIXEL.asm"
+INCLUDE	"./SET_BACKGROUND_WHITE.asm"
+INCLUDE	"./SET_COLOR.asm"
+INCLUDE	"./SET_CURSOR.asm"
+INCLUDE	"./SET_VIDEO_MODE.asm"
+;____________________________________________________________________________
+;____________________________________________________________________________
 .MODEL SMALL
 ;___________________________STACK SEGMEMT____________________________________
 .STACK 64
