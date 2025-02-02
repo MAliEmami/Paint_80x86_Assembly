@@ -166,15 +166,15 @@ MOUSE_STATUS MACRO
 	             MOV AX,03H	;check for mouse button event
 	             INT 33H
 ENDM
-CHECK_LEFT_CLICK_PRESS MACRO
-	                       LOCAL BACK
-	BACK:                  MOV   AX,03H  	;check for mouse button press
-	                       INT   33H
-	                       MOV   [X1],CX
-	                       MOV   [Y1],DX
-	                       CMP   BX,0001H
-	                       JNE   BACK
-ENDM
+; CHECK_LEFT_CLICK_PRESS	MACRO
+						; LOCAL BACK
+						; BACK: MOV AX,03H ;check for mouse button press
+						; INT 33H
+						; MOV [X1],CX
+						; MOV [Y1],DX
+						; CMP BX,0001H
+						; JNE BACK
+; ENDM
 CHECK_LEFT_CLICK_RELEASE MACRO
 	                         LOCAL BACK
 	BACK:                    MOV   AX,03H  	;check for mouse button release
@@ -372,67 +372,86 @@ ENDM
 	;___________________________CODE SEGMEMT____________________________________
 .CODE
 MAIN PROC
-	      MOV                      AX,@DATA
-	      MOV                      DS,AX
+	             MOV                      AX,@DATA
+	             MOV                      DS,AX
 	;_____________________________PLAY GROUND____________________________________
-	      GET_OLD_VIDEO_MODE
+	             GET_OLD_VIDEO_MODE
 	;CLEAR_SCREEN
-	      SET_VIDEO_MODE           NEWVIDEO
-	      SET_BACKGROUND_WHITE
+	             SET_VIDEO_MODE           NEWVIDEO
+	             SET_BACKGROUND_WHITE
 	;_____________________________TOOLS BAR___________________________________
-	      PRINT                    0,1,COLOR_STR
-	      COLOR_BAR                BLACK, BLACK_COL
-	      COLOR_BAR                BLUE, BLUE_COL
-	      COLOR_BAR                CYAN, CYAN_COL
-	      COLOR_BAR                GREEN, GREEN_COL
-	      COLOR_BAR                LIGHT_GREEN, LIGHT_GREEN_COL
-	      COLOR_BAR                RED, RED_COL
-	      COLOR_BAR                MAGENTA, MAGENTA_COL
-	      COLOR_BAR                YELLOW, YELLOW_COL
-	      MOV                      [X1],0
-	      MOV                      [Y1],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
-	      MOV                      [X2],MONITOR_LENGHT
-	      MOV                      [Y2],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
-	      DRAW_LINE
-	;_____________________________DRAWING___________________________________
+	             PRINT                    0,1,COLOR_STR
+	             COLOR_BAR                BLACK, BLACK_COL
+	             COLOR_BAR                BLUE, BLUE_COL
+	             COLOR_BAR                CYAN, CYAN_COL
+	             COLOR_BAR                GREEN, GREEN_COL
+	             COLOR_BAR                LIGHT_GREEN, LIGHT_GREEN_COL
+	             COLOR_BAR                RED, RED_COL
+	             COLOR_BAR                MAGENTA, MAGENTA_COL
+	             COLOR_BAR                YELLOW, YELLOW_COL
+	             MOV                      [X1],0
+	             MOV                      [Y1],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
+	             MOV                      [X2],MONITOR_LENGHT
+	             MOV                      [Y2],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
+	             DRAW_LINE
+	;_____________________________DRAWING______________________________________
 
 		
-	      INITIAL_MOUSE
-	      SHOW_MOUSE_CURSOR
-	PAINT:
-	;MOUSE_STATUS
-	;CMP BX,0010H
+	             INITIAL_MOUSE
+	             SHOW_MOUSE_CURSOR
+		
+	PAINT:       
+	             MOUSE_STATUS
+	             CMP                      BX,0002H
+	             JE                       ERASE_OP
+	             CMP                      BX,0001H
+	             JE                       DRAW_OP
+	             JMP                      PAINT
 			
-	G0:   
-	      MOV                      AX,03H
-	      INT                      33H
-	      CMP                      BX,0001H
-	      JNE                      G0
-	      SET_COLOR
-	      CHECK_LEFT_CLICK_PRESS
-	      CHECK_LEFT_CLICK_RELEASE
-	      DRAW_LINE
+	ERASE_OP:    
+	;CHECK POSITION
+	             CMP                      DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
+	             JB                       PAINT
+	             ERASE
+	             MOUSE_STATUS
+	             CMP                      BX,0002H
+	             JNE                      PAINT
+	             JMP                      ERASE_OP
+			
+			
+			
+			
+	DRAW_OP:     
+	             CMP                      DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
+	             JB                       COLOR_CHOOSE
+	             JMP                      LINE
+	COLOR_CHOOSE:
+	             MOV                      AX,03H
+	             INT                      33H
+	             CMP                      BX,0001H
+	             JNE                      COLOR_CHOOSE
+	             SET_COLOR
+	             JMP                      PAINT
+				
+	LINE:        
+	             MOV                      [X1],CX
+	             MOV                      [Y1],DX
+	             CHECK_LEFT_CLICK_RELEASE
+	             CMP                      DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
+	             JB                       PAINT
+	             DRAW_LINE
 	;WAIT_FOR_KEY_PRESS
 	;SET_VIDEO_MODE	OLDVIDEO
-	      JMP                      PAINT
-	; MOV AX,0000H
-	; INT 33H
-	; MOV AX,01H
-	; INT 33H
-	; BACK: MOV AX,03H
-	; INT 33H
-	; CMP BX, 02H
-	; JE  ERASER
-	; GO: SET_COLOR
-	; PAINT_PIXEL PENCIL
-	; jmp BACK
-	; ERASER: ERASE
-	; jmp GO
-	; MOV AH,07
-	; INT 21H
+	             JMP                      PAINT
+			
+	             MOV                      AH,0CH
+	             INT                      21H
+
+MAIN ENDP
+		END MAIN
 		
-	      MOV                      AH,0CH
-	      INT                      21H
+
+
 
 MAIN ENDP
 		END MAIN
