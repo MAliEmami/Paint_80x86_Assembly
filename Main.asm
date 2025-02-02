@@ -1,3 +1,7 @@
+INCLUDE	"./MACRO/ERASE.MAC"
+INCLUDE	"./MACRO/FILL.MAC"
+INCLUDE	"./MACRO/PRINT.MAC"
+
 ; INCLUDE	"./ERASE.asm"
 ; INCLUDE	"./COLOR_BAR.asm"
 ; INCLUDE	"./PAINT_PIXEL.asm"
@@ -6,16 +10,16 @@
 ; INCLUDE	"./SET_CURSOR.asm"
 ; INCLUDE	"./SET_VIDEO_MODE.asm"
 ;____________________________________________________________________________
-PRINT MACRO ROW, COLUMN, STRING
-	      MOV AH,02H
-	      MOV BH,00
-	      MOV DH,ROW
-	      MOV DL,COLUMN
-	      INT 10H
-	      MOV AH,09H
-	      MOV DX,OFFSET STRING	;load string address
-	      INT 21H
-ENDM
+; PRINT MACRO ROW, COLUMN, STRING
+; 	      MOV AH,02H
+; 	      MOV BH,00
+; 	      MOV DH,ROW
+; 	      MOV DL,COLUMN
+; 	      INT 10H
+; 	      MOV AH,09H
+; 	      MOV DX,OFFSET STRING	;load string address
+; 	      INT 21H
+; ENDM
 ;____________________________________________________________________________
 ; COLOR_BAR MACRO   COLOR, START_COL
 	          ; LOCAL       COL_LOOP, ROW_LOOP
@@ -33,41 +37,41 @@ ENDM
 	          ; JB          COL_LOOP
 ; ENDM
 
-FILL MACRO   COLOR, START_COL , START_ROW , END_COL , END_ROW
-	          LOCAL       COL_LOOP, ROW_LOOP
-	          MOV         CX, START_COL
-	COL_LOOP: 
-	          MOV         DX, START_ROW
-	ROW_LOOP: 
-	          PAINT_PIXEL COLOR
-	          INC         DX
-	          CMP         DX, END_ROW
-	          JB          ROW_LOOP
+; FILL MACRO   COLOR, START_COL , START_ROW , END_COL , END_ROW
+; 	          LOCAL       COL_LOOP, ROW_LOOP
+; 	          MOV         CX, START_COL
+; 	COL_LOOP: 
+; 	          MOV         DX, START_ROW
+; 	ROW_LOOP: 
+; 	          PAINT_PIXEL COLOR
+; 	          INC         DX
+; 	          CMP         DX, END_ROW
+; 	          JB          ROW_LOOP
 
-	          INC         CX
-	          CMP         CX, END_COL
-	          JB          COL_LOOP
-ENDM
+; 	          INC         CX
+; 	          CMP         CX, END_COL
+; 	          JB          COL_LOOP
+; ENDM
 ;____________________________________________________________________________
-ERASE MACRO
-	      PAINT_PIXEL WHITE
-	      DEC         CX
-	      PAINT_PIXEL WHITE
-	      DEC         DX
-	      PAINT_PIXEL WHITE
-	      INC         CX
-	      PAINT_PIXEL WHITE
-	      INC         CX
-	      PAINT_PIXEL WHITE
-	      INC         DX
-	      PAINT_PIXEL WHITE
-	      INC         DX
-	      PAINT_PIXEL WHITE
-	      DEC         CX
-	      PAINT_PIXEL WHITE
-	      DEC         CX
-	      PAINT_PIXEL WHITE
-ENDM
+; ERASE MACRO
+; 	      PAINT_PIXEL WHITE
+; 	      DEC         CX
+; 	      PAINT_PIXEL WHITE
+; 	      DEC         DX
+; 	      PAINT_PIXEL WHITE
+; 	      INC         CX
+; 	      PAINT_PIXEL WHITE
+; 	      INC         CX
+; 	      PAINT_PIXEL WHITE
+; 	      INC         DX
+; 	      PAINT_PIXEL WHITE
+; 	      INC         DX
+; 	      PAINT_PIXEL WHITE
+; 	      DEC         CX
+; 	      PAINT_PIXEL WHITE
+; 	      DEC         CX
+; 	      PAINT_PIXEL WHITE
+; ENDM
 ;____________________________________________________________________________
 PAINT_PIXEL MACRO COLOR
 	            MOV AH,0CH
