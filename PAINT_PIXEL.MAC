@@ -1,5 +1,0 @@
-PAINT_PIXEL MACRO COLOR
-	            MOV AH,0CH
-	            MOV AL,COLOR
-	            INT 10H
-ENDM
