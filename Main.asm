@@ -60,9 +60,13 @@ PAINT_PIXEL MACRO COLOR
 ENDM
 ;____________________________________________________________________________
 SET_BACKGROUND_WHITE MACRO
-	                     MOV AH,0B
-						 MOV BX,BLACKGROUND_ATT
-	                     INT 10H
+					; Set background (border) color (Overscan Register 0x11)
+					mov dx, 03C0h    ; VGA Attribute Controller Index
+					mov al, 11h      ; Overscan color register
+					out dx, al       ; Send register index
+					mov dx, 03C1h    ; Data register
+					mov al, 4        ; Set to color 4 (Red, for example)
+					out dx, al       ; Write color value
 ENDM
 ;____________________________________________________________________________
 SET_COLOR MACRO
@@ -377,7 +381,7 @@ MAIN PROC
 	;_____________________________PLAY GROUND____________________________________
 	             GET_OLD_VIDEO_MODE
 	;CLEAR_SCREEN
-	             SET_VIDEO_MODE           NEWVIDEO
+	             SET_VIDEO_MODE NEWVIDEO
 	             SET_BACKGROUND_WHITE
 	;_____________________________TOOLS BAR___________________________________
 	             PRINT                    0,1,COLOR_STR
@@ -446,12 +450,6 @@ MAIN PROC
 			
 	             MOV                      AH,0CH
 	             INT                      21H
-
-MAIN ENDP
-		END MAIN
-		
-
-
 
 MAIN ENDP
 		END MAIN
