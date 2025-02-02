@@ -17,40 +17,100 @@ PRINT MACRO ROW, COLUMN, STRING
 	      INT 21H
 ENDM
 ;____________________________________________________________________________
-COLOR_BAR MACRO   COLOR, START_COL
+; COLOR_BAR MACRO   COLOR, START_COL
+	          ; LOCAL       COL_LOOP, ROW_LOOP
+	          ; MOV         CX, START_COL + COLOR_MARGIN
+	; COL_LOOP: 
+	          ; MOV         DX, COLOR_MARGIN
+	; ROW_LOOP: 
+	          ; PAINT_PIXEL COLOR
+	          ; INC         DX
+	          ; CMP         DX, COLOR_SIZE + COLOR_MARGIN
+	          ; JB          ROW_LOOP
+
+	          ; INC         CX
+	          ; CMP         CX, COLOR_SIZE + START_COL + COLOR_MARGIN
+	          ; JB          COL_LOOP
+; ENDM
+
+FILL MACRO   COLOR, START_COL , START_ROW , END_COL , END_ROW
 	          LOCAL       COL_LOOP, ROW_LOOP
-	          MOV         CX, START_COL + COLOR_MARGIN
+	          MOV         CX, START_COL
 	COL_LOOP: 
-	          MOV         DX, COLOR_MARGIN
+	          MOV         DX, START_ROW
 	ROW_LOOP: 
 	          PAINT_PIXEL COLOR
 	          INC         DX
-	          CMP         DX, COLOR_SIZE + COLOR_MARGIN
+	          CMP         DX, END_ROW
 	          JB          ROW_LOOP
 
 	          INC         CX
-	          CMP         CX, COLOR_SIZE + START_COL + COLOR_MARGIN
+	          CMP         CX, END_COL
 	          JB          COL_LOOP
 ENDM
 ;____________________________________________________________________________
 ERASE MACRO
-	      PAINT_PIXEL BLACK
-	      DEC         CX
-	      PAINT_PIXEL BLACK
-	      DEC         DX
-	      PAINT_PIXEL BLACK
-	      INC         CX
-	      PAINT_PIXEL BLACK
-	      INC         CX
-	      PAINT_PIXEL BLACK
-	      INC         DX
-	      PAINT_PIXEL BLACK
-	      INC         DX
-	      PAINT_PIXEL BLACK
-	      DEC         CX
-	      PAINT_PIXEL BLACK
-	      DEC         CX
-	      PAINT_PIXEL BLACK
+	      ; PAINT_PIXEL BLACK
+	      ; DEC         CX
+	      ; PAINT_PIXEL BLACK
+	      ; DEC         DX
+	      ; PAINT_PIXEL BLACK
+	      ; INC         CX
+	      ; PAINT_PIXEL BLACK
+	      ; INC         CX
+	      ; PAINT_PIXEL BLACK
+	      ; INC         DX
+	      ; PAINT_PIXEL BLACK
+	      ; INC         DX
+	      ; PAINT_PIXEL BLACK
+	      ; DEC         CX
+	      ; PAINT_PIXEL BLACK
+	      ; DEC         CX
+	      ; PAINT_PIXEL BLACK
+		          PAINT_PIXEL  BLACK
+		
+		
+		DEC         DX
+        PAINT_PIXEL  BLACK
+        INC         DX
+		INC			DX
+        PAINT_PIXEL  BLACK
+		DEC			CX
+		
+		
+        INC         CX
+        PAINT_PIXEL  BLACK
+        DEC         CX
+		DEC         CX
+        PAINT_PIXEL  BLACK
+        INC         CX
+		
+		
+		DEC			CX
+		DEC         DX
+        PAINT_PIXEL  BLACK
+		INC			CX
+		INC			DX
+		
+		INC			CX
+        INC         DX         
+        PAINT_PIXEL  BLACK
+		DEC			CX
+		DEC         DX
+		
+		
+		INC			DX
+        DEC         CX
+        PAINT_PIXEL  BLACK
+		DEC			DX
+		INC			CX
+		
+		
+		DEC			DX
+        INC         CX
+        PAINT_PIXEL  BLACK
+		INC			DX
+		DEC			CX
 ENDM
 ;____________________________________________________________________________
 PAINT_PIXEL MACRO COLOR
@@ -60,13 +120,11 @@ PAINT_PIXEL MACRO COLOR
 ENDM
 ;____________________________________________________________________________
 SET_BACKGROUND_WHITE MACRO
-	                     MOV AH,0B
-						 MOV BX,BLACKGROUND_ATT
-	                     INT 10H
+	                    FILL WHITE,0,0,MONITOR_LENGH,MONITOR_WIDTH
 ENDM
 ;____________________________________________________________________________
 SET_COLOR MACRO
-	                LOCAL SET_BLACK, SET_BLUE, SET_CYAN, SET_GREEN,SET_LIGHT_GREEN, SET_RED, SET_MAGENTA, SET_YELLOW, END_CHOOSE
+	                LOCAL SET_WHITE, SET_BLUE, SET_CYAN, SET_GREEN,SET_LIGHT_GREEN, SET_RED, SET_MAGENTA, SET_YELLOW, END_CHOOSE
 
 	                CMP   DX, COLOR_MARGIN + COLOR_SIZE
 	                JA    END_CHOOSE
@@ -74,8 +132,8 @@ SET_COLOR MACRO
 	                JB    END_CHOOSE
 	                CMP   CX, COLOR_MARGIN
 	                JB    END_CHOOSE
-	                CMP   CX, BLACK_COL + COLOR_MARGIN + COLOR_SIZE
-	                JB    SET_BLACK
+	                CMP   CX, WHITE_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_WHITE
 	                CMP   CX, BLUE_COL + COLOR_MARGIN + COLOR_SIZE
 	                JB    SET_BLUE
 	                CMP   CX, CYAN_COL + COLOR_MARGIN + COLOR_SIZE
@@ -92,8 +150,8 @@ SET_COLOR MACRO
 	                JB    SET_YELLOW
 	                JMP   END_CHOOSE
 				
-	SET_BLACK:      
-	                MOV   PENCIL, BLACK
+	SET_WHITE:      
+	                MOV   PENCIL, WHITE
 	                JMP   END_CHOOSE
 	SET_BLUE:       
 	                MOV   PENCIL, BLUE
@@ -148,7 +206,8 @@ CLEAR_SCREEN MACRO
 	             MOV AX,0600H	;Clear screen
 	             MOV BH,07
 	             MOV CX,0
-	             MOV DX,184FH
+				 MOV DH,59
+	             MOV DL,79
 	             INT 10H
 ENDM
 ;____________________________________________________________________________
@@ -334,18 +393,20 @@ ENDM
 	OLDVIDEO        DB  ?
 	NEWVIDEO        DB  12H
 
-	MONITOR_LENGHT  EQU 639
+	MONITOR_LENGH  	EQU 639
 	MONITOR_WIDTH   EQU 479
 
 	COLOR_SIZE      EQU 20
 	COLOR_MARGIN    EQU 20
 	BAR_LINE_MARGIN EQU 10
 
-	WHITE           EQU 00001111B
+
 	BLACKGROUND_ATT	EQU 0700H
 
 	BLACK           EQU 00000000B
-	BLACK_COL       EQU 0
+	
+	WHITE           EQU 00001111B
+	WHITE_COL       EQU 0
 
 	BLUE            EQU 00001001B
 	BLUE_COL        EQU 25
@@ -373,25 +434,27 @@ ENDM
 .CODE
 MAIN PROC
 	             MOV                      AX,@DATA
-	             MOV                      DS,AX
+			     MOV                      DS,AX
 	;_____________________________PLAY GROUND____________________________________
-	             GET_OLD_VIDEO_MODE
-	;CLEAR_SCREEN
+	    START:   
+				 MOV PENCIL,WHITE
+				 GET_OLD_VIDEO_MODE
+				 CLEAR_SCREEN
 	             SET_VIDEO_MODE           NEWVIDEO
-	             SET_BACKGROUND_WHITE
+	             ;SET_BACKGROUND_WHITE
 	;_____________________________TOOLS BAR___________________________________
-	             PRINT                    0,1,COLOR_STR
-	             COLOR_BAR                BLACK, BLACK_COL
-	             COLOR_BAR                BLUE, BLUE_COL
-	             COLOR_BAR                CYAN, CYAN_COL
-	             COLOR_BAR                GREEN, GREEN_COL
-	             COLOR_BAR                LIGHT_GREEN, LIGHT_GREEN_COL
-	             COLOR_BAR                RED, RED_COL
-	             COLOR_BAR                MAGENTA, MAGENTA_COL
-	             COLOR_BAR                YELLOW, YELLOW_COL
+	             PRINT                	0,1,COLOR_STR
+	             FILL					WHITE, WHITE_COL + COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + WHITE_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                	BLUE, BLUE_COL + COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + BLUE_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                	CYAN, CYAN_COL + COLOR_MARGIN , COLOR_MARGIN , COLOR_SIZE + CYAN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                	GREEN, GREEN_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + GREEN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                	LIGHT_GREEN, LIGHT_GREEN_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + LIGHT_GREEN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                	RED, RED_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + RED_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                	MAGENTA, MAGENTA_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + MAGENTA_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                	YELLOW, YELLOW_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + YELLOW_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             MOV                      [X1],0
 	             MOV                      [Y1],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
-	             MOV                      [X2],MONITOR_LENGHT
+	             MOV                      [X2],MONITOR_LENGH
 	             MOV                      [Y2],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
 	             DRAW_LINE
 	;_____________________________DRAWING______________________________________
@@ -406,6 +469,8 @@ MAIN PROC
 	             JE                       ERASE_OP
 	             CMP                      BX,0001H
 	             JE                       DRAW_OP
+				 CMP					  BX,0004H
+				 JE						  START
 	             JMP                      PAINT
 			
 	ERASE_OP:    
@@ -446,12 +511,6 @@ MAIN PROC
 			
 	             MOV                      AH,0CH
 	             INT                      21H
-
-MAIN ENDP
-		END MAIN
-		
-
-
 
 MAIN ENDP
 		END MAIN
