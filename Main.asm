@@ -8,38 +8,65 @@
 ;____________________________________________________________________________
 COLOR_BAR  MACRO   COLOR, START_COL
 			LOCAL   COL_LOOP, ROW_LOOP
-			MOV     CX, START_COL + COLOR_MRGIN
+			MOV     CX, START_COL + COLOR_MARGIN
 			COL_LOOP:
-				MOV     DX, COLOR_MRGIN
+				MOV     DX, COLOR_MARGIN
 				ROW_LOOP:
 					PAINT_PIXEL  COLOR
 					INC     DX
-					CMP     DX, COLOR_SIZE + COLOR_MRGIN
+					CMP     DX, COLOR_SIZE + COLOR_MARGIN
 					JB      ROW_LOOP
 
 					INC     CX
-					CMP     CX, COLOR_SIZE + START_COL + COLOR_MRGIN
+					CMP     CX, COLOR_SIZE + START_COL + COLOR_MARGIN
 					JB      COL_LOOP
 ENDM
 ;____________________________________________________________________________
 ERASE  	MACRO
         PAINT_PIXEL  BLACK
+		
+		
+		DEC         DX
+        PAINT_PIXEL  BLACK
+        INC         DX
+		INC			DX
+        PAINT_PIXEL  BLACK
+		DEC			CX
+		
+		
+        INC         CX
+        PAINT_PIXEL  BLACK
         DEC         CX
-        PAINT_PIXEL  BLACK
-        DEC         DX
-        PAINT_PIXEL  BLACK
-        INC         CX
+		DEC         CX
         PAINT_PIXEL  BLACK
         INC         CX
+		
+		
+		DEC			CX
+		DEC         DX
         PAINT_PIXEL  BLACK
-        INC         DX 
-        PAINT_PIXEL  BLACK
+		INC			CX
+		INC			DX
+		
+		INC			CX
         INC         DX         
         PAINT_PIXEL  BLACK
+		DEC			CX
+		DEC         DX
+		
+		
+		INC			DX
         DEC         CX
         PAINT_PIXEL  BLACK
-        DEC         CX
+		DEC			DX
+		INC			CX
+		
+		
+		DEC			DX
+        INC         CX
         PAINT_PIXEL  BLACK
+		INC			DX
+		DEC			CX
 ENDM
 ;____________________________________________________________________________
 PAINT_PIXEL MACRO COLOR	
@@ -58,19 +85,19 @@ ENDM
 ;____________________________________________________________________________
 SET_COLOR    MACRO
 			LOCAL   SET_WHITE, SET_BLUE, SET_GREEN, SET_RED, END_CHOOSE
-			CMP 	DX, COLOR_MRGIN + COLOR_SIZE
+			CMP 	DX, COLOR_MARGIN + COLOR_SIZE
 			JA 		END_CHOOSE
-			CMP		DX, COLOR_MRGIN
+			CMP		DX, COLOR_MARGIN
 			JB		END_CHOOSE
-			CMP		CX, COLOR_MRGIN
+			CMP		CX, COLOR_MARGIN
 			JB		END_CHOOSE
-				CMP     CX, COLOR_MRGIN + WHITE_COL + COLOR_SIZE
+				CMP     CX, COLOR_MARGIN + WHITE_COL + COLOR_SIZE
 				JB      SET_WHITE
-				CMP     CX, RED_COL + COLOR_MRGIN + COLOR_SIZE
+				CMP     CX, RED_COL + COLOR_MARGIN + COLOR_SIZE
 				JB      SET_RED
-				CMP     CX, GREEN_COL + COLOR_MRGIN + COLOR_SIZE
+				CMP     CX, GREEN_COL + COLOR_MARGIN + COLOR_SIZE
 				JB      SET_GREEN
-				CMP     CX, BLUE_COL + COLOR_MRGIN + COLOR_SIZE
+				CMP     CX, BLUE_COL + COLOR_MARGIN + COLOR_SIZE
 				JB      SET_BLUE
 				JMP     END_CHOOSE
 				
@@ -134,15 +161,15 @@ MOUSE_STATUS	MACRO
 				MOV AX,03H ;check for mouse button event
 				INT 33H
 ENDM
-CHECK_LEFT_CLICK_PRESS	MACRO
-						LOCAL BACK
-						BACK: MOV AX,03H ;check for mouse button press
-						INT 33H
-						MOV [X1],CX
-						MOV [Y1],DX
-						CMP BX,0001H
-						JNE BACK
-ENDM
+; CHECK_LEFT_CLICK_PRESS	MACRO
+						; LOCAL BACK
+						; BACK: MOV AX,03H ;check for mouse button press
+						; INT 33H
+						; MOV [X1],CX
+						; MOV [Y1],DX
+						; CMP BX,0001H
+						; JNE BACK
+; ENDM
 CHECK_LEFT_CLICK_RELEASE	MACRO
 							LOCAL BACK
 							BACK: MOV AX,03H ;check for mouse button release
@@ -297,9 +324,11 @@ ENDM
 		SLOPE_ERROR 		DW ?
 		OLDVIDEO 			DB ?
 		NEWVIDEO 			DB 12H
+		
+		
 		COLOR_SIZE  		EQU	20
-		COLOR_MRGIN			EQU 20
-
+		COLOR_MARGIN		EQU 20
+		BAR_LINE_MARGIN		EQU	5
 		WHITE				EQU	00001111B
 		WHITE_COL			EQU	20
 
@@ -330,43 +359,56 @@ MAIN 	PROC
 		COLOR_BAR	RED, RED_COL
 		COLOR_BAR	GREEN, GREEN_COL
 		COLOR_BAR	BLUE, BLUE_COL
-;_____________________________DRAWING___________________________________
+;_____________________________DRAWING______________________________________
 
 		
 		INITIAL_MOUSE
 		SHOW_MOUSE_CURSOR
-		PAINT:
-			;MOUSE_STATUS
-			;CMP BX,0010H
-			
-			G0: 
-			MOV AX,03H
-			INT	33H
-			CMP BX,0001H
-			JNE G0
-			SET_COLOR
-			CHECK_LEFT_CLICK_PRESS
-			CHECK_LEFT_CLICK_RELEASE
-			DRAW_LINE
-			;WAIT_FOR_KEY_PRESS
-			;SET_VIDEO_MODE	OLDVIDEO
-			JMP PAINT
-		; MOV AX,0000H
-		; INT 33H
-		; MOV AX,01H
-		; INT 33H
-		; BACK: MOV AX,03H
-			  ; INT 33H
-			  ; CMP BX, 02H
-			  ; JE  ERASER
-		  ; GO: SET_COLOR
-		      ; PAINT_PIXEL PENCIL
-			  ; jmp BACK
-	  ; ERASER: ERASE
-		      ; jmp GO
-		; MOV AH,07
-		; INT 21H
 		
+		PAINT:
+			MOUSE_STATUS
+			CMP BX,0002H
+			JE	ERASE_OP
+			CMP BX,0001H
+			JE	DRAW_OP
+			JMP	PAINT
+			
+			ERASE_OP:
+				;CHECK POSITION
+				CMP	DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
+				JB	PAINT
+				ERASE
+				MOUSE_STATUS
+				CMP BX,0002H
+				JNE	PAINT
+				JMP	ERASE_OP
+			
+			
+			
+			
+			DRAW_OP:
+				CMP	DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
+				JB	COLOR_CHOOSE
+				JMP	LINE
+				COLOR_CHOOSE: 
+				MOV AX,03H
+				INT	33H
+				CMP BX,0001H
+				JNE COLOR_CHOOSE
+				SET_COLOR
+				JMP PAINT
+				
+				LINE:
+					MOV [X1],CX
+					MOV [Y1],DX
+					CHECK_LEFT_CLICK_RELEASE
+					CMP	DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
+					JB	PAINT		
+					DRAW_LINE
+					;WAIT_FOR_KEY_PRESS
+					;SET_VIDEO_MODE	OLDVIDEO
+					JMP PAINT
+			
 		MOV AH,0CH
 		INT 21H
 
