@@ -50,67 +50,23 @@ FILL MACRO   COLOR, START_COL , START_ROW , END_COL , END_ROW
 ENDM
 ;____________________________________________________________________________
 ERASE MACRO
-	      ; PAINT_PIXEL BLACK
-	      ; DEC         CX
-	      ; PAINT_PIXEL BLACK
-	      ; DEC         DX
-	      ; PAINT_PIXEL BLACK
-	      ; INC         CX
-	      ; PAINT_PIXEL BLACK
-	      ; INC         CX
-	      ; PAINT_PIXEL BLACK
-	      ; INC         DX
-	      ; PAINT_PIXEL BLACK
-	      ; INC         DX
-	      ; PAINT_PIXEL BLACK
-	      ; DEC         CX
-	      ; PAINT_PIXEL BLACK
-	      ; DEC         CX
-	      ; PAINT_PIXEL BLACK
-		          PAINT_PIXEL  BLACK
-		
-		
-		DEC         DX
-        PAINT_PIXEL  BLACK
-        INC         DX
-		INC			DX
-        PAINT_PIXEL  BLACK
-		DEC			CX
-		
-		
-        INC         CX
-        PAINT_PIXEL  BLACK
-        DEC         CX
-		DEC         CX
-        PAINT_PIXEL  BLACK
-        INC         CX
-		
-		
-		DEC			CX
-		DEC         DX
-        PAINT_PIXEL  BLACK
-		INC			CX
-		INC			DX
-		
-		INC			CX
-        INC         DX         
-        PAINT_PIXEL  BLACK
-		DEC			CX
-		DEC         DX
-		
-		
-		INC			DX
-        DEC         CX
-        PAINT_PIXEL  BLACK
-		DEC			DX
-		INC			CX
-		
-		
-		DEC			DX
-        INC         CX
-        PAINT_PIXEL  BLACK
-		INC			DX
-		DEC			CX
+	      PAINT_PIXEL WHITE
+	      DEC         CX
+	      PAINT_PIXEL WHITE
+	      DEC         DX
+	      PAINT_PIXEL WHITE
+	      INC         CX
+	      PAINT_PIXEL WHITE
+	      INC         CX
+	      PAINT_PIXEL WHITE
+	      INC         DX
+	      PAINT_PIXEL WHITE
+	      INC         DX
+	      PAINT_PIXEL WHITE
+	      DEC         CX
+	      PAINT_PIXEL WHITE
+	      DEC         CX
+	      PAINT_PIXEL WHITE
 ENDM
 ;____________________________________________________________________________
 PAINT_PIXEL MACRO COLOR
@@ -120,11 +76,16 @@ PAINT_PIXEL MACRO COLOR
 ENDM
 ;____________________________________________________________________________
 SET_BACKGROUND_WHITE MACRO
-	                    FILL WHITE,0,0,MONITOR_LENGH,MONITOR_WIDTH
+				 MOV AX,0600H
+	             MOV BH,WHITE
+				 MOV CX,0
+				 MOV DH,59
+	             MOV DL,79
+	             INT 10H
 ENDM
 ;____________________________________________________________________________
 SET_COLOR MACRO
-	                LOCAL SET_WHITE, SET_BLUE, SET_CYAN, SET_GREEN,SET_LIGHT_GREEN, SET_RED, SET_MAGENTA, SET_YELLOW, END_CHOOSE
+	                LOCAL SET_BLACK, SET_BLUE, SET_CYAN, SET_GREEN,SET_LIGHT_GREEN, SET_RED, SET_MAGENTA, SET_YELLOW, END_CHOOSE
 
 	                CMP   DX, COLOR_MARGIN + COLOR_SIZE
 	                JA    END_CHOOSE
@@ -132,8 +93,8 @@ SET_COLOR MACRO
 	                JB    END_CHOOSE
 	                CMP   CX, COLOR_MARGIN
 	                JB    END_CHOOSE
-	                CMP   CX, WHITE_COL + COLOR_MARGIN + COLOR_SIZE
-	                JB    SET_WHITE
+	                CMP   CX, BLACK_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_BLACK
 	                CMP   CX, BLUE_COL + COLOR_MARGIN + COLOR_SIZE
 	                JB    SET_BLUE
 	                CMP   CX, CYAN_COL + COLOR_MARGIN + COLOR_SIZE
@@ -150,8 +111,8 @@ SET_COLOR MACRO
 	                JB    SET_YELLOW
 	                JMP   END_CHOOSE
 				
-	SET_WHITE:      
-	                MOV   PENCIL, WHITE
+	SET_BLACK:      
+	                MOV   PENCIL, BLACK
 	                JMP   END_CHOOSE
 	SET_BLUE:       
 	                MOV   PENCIL, BLUE
@@ -204,8 +165,13 @@ GET_OLD_VIDEO_MODE MACRO
 ENDM
 CLEAR_SCREEN MACRO
 	             MOV AX,0600H	;Clear screen
-	             MOV BH,07
-	             MOV CX,0
+	             MOV BH,WHITE
+				 MOV CH,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 1
+				 SHR CH,1
+				 SHR CH,1
+				 SHR CH,1
+				 SHR CH,1
+	             MOV CL,0
 				 MOV DH,59
 	             MOV DL,79
 	             INT 10H
@@ -403,10 +369,10 @@ ENDM
 
 	BLACKGROUND_ATT	EQU 0700H
 
-	BLACK           EQU 00000000B
-	
 	WHITE           EQU 00001111B
-	WHITE_COL       EQU 0
+	
+	BLACK           EQU 00000000B
+	BLACK_COL       EQU 0
 
 	BLUE            EQU 00001001B
 	BLUE_COL        EQU 25
@@ -429,22 +395,21 @@ ENDM
 	YELLOW          EQU 00001110B
 	YELLOW_COL      EQU 175
 
-	PENCIL          DB  WHITE
+	PENCIL          DB  BLACK
 	;___________________________CODE SEGMEMT____________________________________
 .CODE
 MAIN PROC
 	             MOV                      AX,@DATA
 			     MOV                      DS,AX
 	;_____________________________PLAY GROUND____________________________________
-	    START:   
-				 MOV PENCIL,WHITE
+				
 				 GET_OLD_VIDEO_MODE
-				 CLEAR_SCREEN
 	             SET_VIDEO_MODE           NEWVIDEO
-	             ;SET_BACKGROUND_WHITE
+				 ;CLEAR_SCREEN
+	             SET_BACKGROUND_WHITE
 	;_____________________________TOOLS BAR___________________________________
 	             PRINT                	0,1,COLOR_STR
-	             FILL					WHITE, WHITE_COL + COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + WHITE_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL					BLACK, BLACK_COL + COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + BLACK_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             FILL                	BLUE, BLUE_COL + COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + BLUE_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             FILL                	CYAN, CYAN_COL + COLOR_MARGIN , COLOR_MARGIN , COLOR_SIZE + CYAN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             FILL                	GREEN, GREEN_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + GREEN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
@@ -470,8 +435,17 @@ MAIN PROC
 	             CMP                      BX,0001H
 	             JE                       DRAW_OP
 				 CMP					  BX,0004H
-				 JE						  START
+				 JE						  RESET
 	             JMP                      PAINT
+				RESET:
+				 CLEAR_SCREEN
+				 MOV PENCIL,BLACK
+				 MOV                      [X1],0
+	             MOV                      [Y1],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
+	             MOV                      [X2],MONITOR_LENGH
+	             MOV                      [Y2],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
+	             DRAW_LINE
+				 JMP PAINT
 			
 	ERASE_OP:    
 	;CHECK POSITION
