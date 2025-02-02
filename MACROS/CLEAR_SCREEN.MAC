@@ -1,0 +1,13 @@
+CLEAR_SCREEN MACRO
+	             MOV AX,0600H	;Clear screen
+	             MOV BH,WHITE
+				 MOV CH,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 1
+				 SHR CH,1
+				 SHR CH,1
+				 SHR CH,1
+				 SHR CH,1
+	             MOV CL,0
+				 MOV DH,59
+	             MOV DL,79
+	             INT 10H
+ENDM

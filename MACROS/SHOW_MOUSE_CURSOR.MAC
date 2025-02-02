@@ -1,0 +1,4 @@
+SHOW_MOUSE_CURSOR MACRO
+	                  MOV AX,01H	;Show mouse cursor
+	                  INT 33H
+ENDM

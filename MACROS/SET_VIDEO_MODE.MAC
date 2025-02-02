@@ -1,0 +1,5 @@
+SET_VIDEO_MODE MACRO	MODE
+	               MOV AH,00H 	;Set new video mode
+	               MOV AL,MODE
+	               INT 10H
+ENDM

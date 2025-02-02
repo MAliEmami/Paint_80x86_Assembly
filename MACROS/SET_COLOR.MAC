@@ -1,0 +1,53 @@
+SET_COLOR MACRO
+	                LOCAL SET_BLACK, SET_BLUE, SET_CYAN, SET_GREEN,SET_LIGHT_GREEN, SET_RED, SET_MAGENTA, SET_YELLOW, END_CHOOSE
+
+	                CMP   DX, COLOR_MARGIN + COLOR_SIZE
+	                JA    END_CHOOSE
+	                CMP   DX, COLOR_MARGIN
+	                JB    END_CHOOSE
+	                CMP   CX, COLOR_MARGIN
+	                JB    END_CHOOSE
+	                CMP   CX, BLACK_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_BLACK
+	                CMP   CX, BLUE_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_BLUE
+	                CMP   CX, CYAN_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_CYAN
+	                CMP   CX, GREEN_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_GREEN
+	                CMP   CX, LIGHT_GREEN_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_LIGHT_GREEN
+	                CMP   CX, RED_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_RED
+	                CMP   CX, MAGENTA_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_MAGENTA
+	                CMP   CX, YELLOW_COL + COLOR_MARGIN + COLOR_SIZE
+	                JB    SET_YELLOW
+	                JMP   END_CHOOSE
+				
+	SET_BLACK:      
+	                MOV   PENCIL, BLACK
+	                JMP   END_CHOOSE
+	SET_BLUE:       
+	                MOV   PENCIL, BLUE
+	                JMP   END_CHOOSE
+	SET_CYAN:       
+	                MOV   PENCIL, CYAN
+	                JMP   END_CHOOSE
+	SET_GREEN:      
+	                MOV   PENCIL, GREEN
+	                JMP   END_CHOOSE
+	SET_LIGHT_GREEN:
+	                MOV   PENCIL, LIGHT_GREEN
+	                JMP   END_CHOOSE
+	SET_RED:        
+	                MOV   PENCIL, RED
+	                JMP   END_CHOOSE
+	SET_MAGENTA:    
+	                MOV   PENCIL, MAGENTA
+	                JMP   END_CHOOSE
+	SET_YELLOW:     
+	                MOV   PENCIL, YELLOW
+	                JMP   END_CHOOSE
+	END_CHOOSE:     
+ENDM

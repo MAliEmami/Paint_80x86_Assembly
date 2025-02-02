@@ -1,0 +1,9 @@
+CHECK_LEFT_CLICK_RELEASE MACRO
+	                         LOCAL BACK
+	BACK:                    MOV   AX,03H  	;check for mouse button release
+	                         INT   33H
+	                         MOV   [X2],CX
+	                         MOV   [Y2],DX
+	                         CMP   BX,0000H
+	                         JNE   BACK
+ENDM

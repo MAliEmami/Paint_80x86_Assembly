@@ -1,0 +1,4 @@
+INITIAL_MOUSE MACRO
+	              MOV AX,0000H	;Initialize mouse
+	              INT 33H
+ENDM

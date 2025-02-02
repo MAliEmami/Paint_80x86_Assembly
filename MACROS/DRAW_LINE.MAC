@@ -1,0 +1,34 @@
+DRAW_LINE MACRO
+	              LOCAL     COMPARE,NEXT,HIGH_PLOT,NO_SWAPP_LOW,NO_SWAPP_HIGH,EXIT
+	              MOV       DI,[Y2]
+	              SUB       DI,[Y1]
+	              JNC       NEXT
+	              NOT       DI
+	              INC       DI
+	NEXT:         
+	              MOV       SI,[X2]
+	              SUB       SI,[X1]
+	              JNC       COMPARE
+	              NOT       SI
+	              INC       SI
+	COMPARE:      
+	              CMP       DI,SI
+	              JGE       HIGH_PLOT
+	              MOV       BX,[X1]
+	              CMP       BX,[X2]
+	              JLE       NO_SWAPP_LOW
+	              PLOT_LOW  [X2],[Y2],[X1],[Y1]
+	              JMP       EXIT
+	NO_SWAPP_LOW: 
+	              PLOT_LOW  [X1],[Y1],[X2],[Y2]
+	              JMP       EXIT
+	HIGH_PLOT:    
+	              MOV       BX,[Y1]
+	              CMP       BX,[Y2]
+	              JLE       NO_SWAPP_HIGH
+	              PLOT_HIGH [X2],[Y2],[X1],[Y1]
+	              JMP       EXIT
+	NO_SWAPP_HIGH:
+	              PLOT_HIGH [X1],[Y1],[X2],[Y2]
+	EXIT:         
+ENDM

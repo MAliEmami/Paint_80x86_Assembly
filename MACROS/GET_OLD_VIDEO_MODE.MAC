@@ -1,0 +1,5 @@
+GET_OLD_VIDEO_MODE MACRO
+	                   MOV AH,0FH       	;Get the current video mode
+	                   INT 10H
+	                   MOV [OLDVIDEO],AL	;Save it
+ENDM

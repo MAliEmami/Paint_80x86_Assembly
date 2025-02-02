@@ -1,0 +1,46 @@
+PLOT_HIGH MACRO X_1,Y_1,X_2,Y_2
+	          LOCAL NEXT,AGAIN,G,EXIT,L1
+	          MOV   BX,0
+	          MOV   SI,X_2
+	          SUB   SI,X_1
+	          MOV   DI,Y_2
+	          SUB   DI,Y_1
+	          MOV   [Xi],1
+	          CMP   SI,0
+	          JGE   NEXT
+	          NOT   [Xi]
+	          INC   [Xi]
+	          NOT   SI
+	          INC   SI
+			
+	;NEG [Xi]
+	;NEG SI
+	NEXT:     
+	          SHL   SI,1
+	          MOV   [SLOPE_ERROR],SI
+	          SUB   [SLOPE_ERROR],DI
+	          MOV   DX,Y_1
+	          MOV   CX,X_1
+	AGAIN:    
+	;PAINT_PIXEL PENCIL
+	          MOV   AH,0CH
+	          MOV   AL,PENCIL
+	          INT   10H
+	          CMP   [SLOPE_ERROR],0
+	          JG    G
+	          ADD   [SLOPE_ERROR],SI
+	          JMP   L1
+	G:        
+	          ADD   CX,[Xi]
+	          MOV   AX,SI
+	          SHL   DI,1
+	          SUB   AX,DI
+	          SHR   DI,1
+	          ADD   [SLOPE_ERROR],AX
+	L1:       
+	          CMP   DX,Y_2
+	          JE    EXIT
+	          INC   DX
+	          JMP   AGAIN
+	EXIT:     
+ENDM

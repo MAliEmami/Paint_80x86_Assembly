@@ -1,0 +1,4 @@
+MOUSE_STATUS MACRO
+	             MOV AX,03H	;check for mouse button event
+	             INT 33H
+ENDM

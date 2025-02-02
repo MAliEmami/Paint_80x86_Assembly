@@ -1,0 +1,4 @@
+WAIT_FOR_KEY_PRESS MACRO
+	           MOV AH,01
+	           INT 16H
+ENDM

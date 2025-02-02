@@ -1,6 +1,24 @@
-
-INCLUDE	MACROS.MAC
-;____________________________________________________________________________
+INCLUDE MACROS/PRINT_A_CHAR.MAC
+INCLUDE MACROS/PRINT_A_CHAR.MAC
+INCLUDE MACROS/PRINT.MAC
+INCLUDE MACROS/FILL.MAC
+INCLUDE MACROS/ERASE.MAC
+INCLUDE MACROS/PAINT_PIXEL.MAC
+INCLUDE MACROS/SET_BACKGROUND_WHITE.MAC
+INCLUDE MACROS/SET_COLOR.MAC
+INCLUDE MACROS/SET_CURSOR.MAC
+INCLUDE MACROS/WAIT_FOR_KEY_PRESS.MAC
+INCLUDE MACROS/SET_VIDEO_MODE.MAC
+INCLUDE MACROS/GET_OLD_VIDEO_MODE.MAC
+INCLUDE MACROS/CLEAR_SCREEN.MAC
+INCLUDE MACROS/INITIAL_MOUSE.MAC
+INCLUDE MACROS/SHOW_MOUSE_CURSOR.MAC
+INCLUDE MACROS/HIDE_MOUSE.MAC
+INCLUDE MACROS/MOUSE_STATUS.MAC
+INCLUDE MACROS/CHECK_LEFT_CLICK_RELEASE.MAC
+INCLUDE MACROS/PLOT_LOW.MAC
+INCLUDE MACROS/PLOT_HIGH.MAC
+INCLUDE MACROS/DRAW_LINE.MAC
 
 .MODEL SMALL
 ;___________________________STACK SEGMEMT____________________________________
@@ -23,7 +41,7 @@ INCLUDE	MACROS.MAC
 	OLDVIDEO        DB  ?
 	NEWVIDEO        DB  12H
 
-	MONITOR_LENGH  	EQU 639
+	MONITOR_LENGH   EQU 639
 	MONITOR_WIDTH   EQU 479
 
 	COLOR_SIZE      EQU 20
@@ -62,32 +80,32 @@ INCLUDE	MACROS.MAC
 .CODE
 MAIN PROC
 	             MOV                      AX,@DATA
-			     MOV                      DS,AX
+	             MOV                      DS,AX
 	;_____________________________PLAY GROUND____________________________________
 				
-				 GET_OLD_VIDEO_MODE
+	             GET_OLD_VIDEO_MODE
 	             SET_VIDEO_MODE           NEWVIDEO
-				 ;CLEAR_SCREEN
+	;CLEAR_SCREEN
 	             SET_BACKGROUND_WHITE
 	;_____________________________TOOLS BAR___________________________________
-	             PRINT                	0,1
-	             FILL					BLACK, BLACK_COL + COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + BLACK_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             PRINT                    0,1
+	             FILL                     BLACK, BLACK_COL + COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + BLACK_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             
-				 FILL                	BLUE, BLUE_COL + COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + BLUE_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                     BLUE, BLUE_COL + COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + BLUE_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             
-				 FILL                	CYAN, CYAN_COL + COLOR_MARGIN , COLOR_MARGIN , COLOR_SIZE + CYAN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                     CYAN, CYAN_COL + COLOR_MARGIN , COLOR_MARGIN , COLOR_SIZE + CYAN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             
-				 FILL                	GREEN, GREEN_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + GREEN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                     GREEN, GREEN_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + GREEN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             
-				 FILL                	LIGHT_GREEN, LIGHT_GREEN_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + LIGHT_GREEN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                     LIGHT_GREEN, LIGHT_GREEN_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + LIGHT_GREEN_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             
-				 FILL                	RED, RED_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + RED_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                     RED, RED_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + RED_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             
-				 FILL                	MAGENTA, MAGENTA_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + MAGENTA_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                     MAGENTA, MAGENTA_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + MAGENTA_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             
-				 FILL                	YELLOW, YELLOW_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + YELLOW_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
+	             FILL                     YELLOW, YELLOW_COL+ COLOR_MARGIN , COLOR_MARGIN,COLOR_SIZE + YELLOW_COL + COLOR_MARGIN,COLOR_SIZE + COLOR_MARGIN
 	             
-				 MOV                      [X1],0
+	             MOV                      [X1],0
 	             MOV                      [Y1],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
 	             MOV                      [X2],MONITOR_LENGH
 	             MOV                      [Y2],COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN
@@ -95,64 +113,64 @@ MAIN PROC
 	;_____________________________DRAWING______________________________________
 
 		
-	        INITIAL_MOUSE
-	        SHOW_MOUSE_CURSOR
+	             INITIAL_MOUSE
+	             SHOW_MOUSE_CURSOR
 		
-	PAINT:  
-			WAIT_FOR_KEY_PRESS
-			JNZ EXIT
-	        MOUSE_STATUS
-	        CMP                      BX,0002H
-	        JE                       ERASE_OP
-	        CMP                      BX,0001H
-	        JE                       DRAW_OP
-			CMP					  	 BX,0004H
-			JE						 RESET
-	        JMP                      PAINT
-			RESET:
-			CLEAR_SCREEN
-			MOV PENCIL,BLACK
-			SHOW_MOUSE_CURSOR
-			JMP PAINT
+	PAINT:       
+	             WAIT_FOR_KEY_PRESS
+	             JNZ                      EXIT
+	             MOUSE_STATUS
+	             CMP                      BX,0002H
+	             JE                       ERASE_OP
+	             CMP                      BX,0001H
+	             JE                       DRAW_OP
+	             CMP                      BX,0004H
+	             JE                       RESET
+	             JMP                      PAINT
+	RESET:       
+	             CLEAR_SCREEN
+	             MOV                      PENCIL,BLACK
+	             SHOW_MOUSE_CURSOR
+	             JMP                      PAINT
 			
-			ERASE_OP:    
-			;CHECK POSITION
-					 CMP                      DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
-					 JB                       PAINT
-					 ERASE
-					 MOUSE_STATUS
-					 CMP                      BX,0002H
-					 JNE                      PAINT
-					 JMP                      ERASE_OP
+	ERASE_OP:    
+	;CHECK POSITION
+	             CMP                      DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
+	             JB                       PAINT
+	             ERASE
+	             MOUSE_STATUS
+	             CMP                      BX,0002H
+	             JNE                      PAINT
+	             JMP                      ERASE_OP
 				
 				
 				
 				
-			DRAW_OP:     
-					 CMP                      DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
-					 JB                       COLOR_CHOOSE
-					 JMP                      LINE
-			COLOR_CHOOSE:
-					 MOV                      AX,03H
-					 INT                      33H
-					 CMP                      BX,0001H
-					 JNE                      COLOR_CHOOSE
-					 SET_COLOR
-					 JMP                      PAINT
+	DRAW_OP:     
+	             CMP                      DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
+	             JB                       COLOR_CHOOSE
+	             JMP                      LINE
+	COLOR_CHOOSE:
+	             MOV                      AX,03H
+	             INT                      33H
+	             CMP                      BX,0001H
+	             JNE                      COLOR_CHOOSE
+	             SET_COLOR
+	             JMP                      PAINT
 					
-			LINE:        
-					 MOV                      [X1],CX
-					 MOV                      [Y1],DX
-					 CHECK_LEFT_CLICK_RELEASE
-					 CMP                      DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
-					 JB                       PAINT
-					 DRAW_LINE
-					 JMP                      PAINT
-					 EXIT:
-					 HIDE_MOUSE
-					 SET_VIDEO_MODE	OLDVIDEO
-					 MOV                      AH,4CH
-					 INT                      21H
+	LINE:        
+	             MOV                      [X1],CX
+	             MOV                      [Y1],DX
+	             CHECK_LEFT_CLICK_RELEASE
+	             CMP                      DX,COLOR_MARGIN + COLOR_SIZE + BAR_LINE_MARGIN + 2
+	             JB                       PAINT
+	             DRAW_LINE
+	             JMP                      PAINT
+	EXIT:        
+	             HIDE_MOUSE
+	             SET_VIDEO_MODE           OLDVIDEO
+	             MOV                      AH,4CH
+	             INT                      21H
 
 MAIN ENDP
 		END MAIN
