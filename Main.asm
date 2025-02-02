@@ -57,34 +57,56 @@ SET_BACKGROUND_WHITE MACRO
 ENDM
 ;____________________________________________________________________________
 SET_COLOR    MACRO
-			LOCAL   SET_WHITE, SET_BLUE, SET_GREEN, SET_RED, END_CHOOSE
+			LOCAL   SET_BLACK, SET_BLUE, SET_CYAN, SET_GREEN,SET_LIGHT_GREEN, SET_RED, SET_MAGENTA, SET_YELLOW, END_CHOOSE
+
 			CMP 	DX, COLOR_MRGIN + COLOR_SIZE
 			JA 		END_CHOOSE
 			CMP		DX, COLOR_MRGIN
 			JB		END_CHOOSE
 			CMP		CX, COLOR_MRGIN
 			JB		END_CHOOSE
-				CMP     CX, COLOR_MRGIN + WHITE_COL + COLOR_SIZE
-				JB      SET_WHITE
-				CMP     CX, RED_COL + COLOR_MRGIN + COLOR_SIZE
-				JB      SET_RED
-				CMP     CX, GREEN_COL + COLOR_MRGIN + COLOR_SIZE
-				JB      SET_GREEN
+				CMP     CX, BLACK_COL + COLOR_MRGIN + COLOR_SIZE
+				JB      SET_BLACK
 				CMP     CX, BLUE_COL + COLOR_MRGIN + COLOR_SIZE
 				JB      SET_BLUE
-				JMP     END_CHOOSE
+				CMP     CX, CYAN_COL + COLOR_MRGIN + COLOR_SIZE
+				JB      SET_CYAN
+				CMP     CX, GREEN_COL + COLOR_MRGIN + COLOR_SIZE
+				JB      SET_GREEN
+				CMP     CX, LIGHT_GREEN_COL + COLOR_MRGIN + COLOR_SIZE
+				JB      SET_LIGHT_GREEN
+				CMP     CX, RED_COL + COLOR_MRGIN + COLOR_SIZE
+				JB      SET_RED
+				CMP     CX, MAGENTA_COL + COLOR_MRGIN + COLOR_SIZE
+				JB      SET_MAGENTA
+				CMP     CX, YELLOW_COL + COLOR_MRGIN + COLOR_SIZE
+				JB      SET_YELLOW
+				JMP       END_CHOOSE
 				
-				SET_WHITE:
-					MOV     PENCIL, WHITE
+				SET_BLACK:
+					MOV     PENCIL, BLACK
 					JMP     END_CHOOSE
 				SET_BLUE:
 					MOV     PENCIL, BLUE
 					JMP     END_CHOOSE
+				SET_CYAN:
+					MOV     PENCIL, CYAN
+					JMP     END_CHOOSE
 				SET_GREEN:
 					MOV     PENCIL, GREEN
 					JMP     END_CHOOSE
+				SET_LIGHT_GREEN:
+					MOV     PENCIL, LIGHT_GREEN
+					JMP     END_CHOOSE
 				SET_RED:
 					MOV     PENCIL, RED
+					JMP     END_CHOOSE
+				SET_MAGENTA:
+					MOV     PENCIL, MAGENTA
+					JMP     END_CHOOSE
+				SET_YELLOW:
+					MOV     PENCIL, YELLOW
+					JMP     END_CHOOSE
 			END_CHOOSE:
 ENDM
 ;____________________________________________________________________________
@@ -101,7 +123,7 @@ SET_VIDEO_MODE	MACRO
 				INT		10H
 ENDM
 ;____________________________________________________________________________
-.MODEL SMALL
+.MODEL LARGE
 ;___________________________STACK SEGMEMT____________________________________
 .STACK 64
 ;___________________________DATA SEGMEMT____________________________________
@@ -110,19 +132,31 @@ ENDM
 		COLOR_SIZE  		EQU	20
 		COLOR_MRGIN			EQU 20
 
-		WHITE				EQU	00001111B
-		WHITE_COL			EQU	20
-
-		RED					EQU	00001100B
-		RED_COL				EQU	40
-
-		GREEN				EQU	00001010B
-		GREEN_COL			EQU	60
-
-		BLUE				EQU	00001001B
-		BLUE_COL			EQU	80
+		WHITE				EQU 00001111B
 
 		BLACK				EQU 00000000B
+		BLACK_COL			EQU 0
+
+		BLUE				EQU	00001001B
+		BLUE_COL			EQU	25
+
+		CYAN				EQU 00000011B
+		CYAN_COL			EQU 50
+
+		GREEN				EQU	00000010B
+		GREEN_COL			EQU	75
+
+		LIGHT_GREEN			EQU 00001010B
+		LIGHT_GREEN_COL		EQU 100
+
+		RED					EQU	00000100B
+		RED_COL				EQU	125
+
+		MAGENTA				EQU 00000101B
+		MAGENTA_COL			EQU 150
+
+		YELLOW				EQU 00001110B
+		YELLOW_COL			EQU 175
 
 		PENCIL			    DB  WHITE   
 ;___________________________CODE SEGMEMT____________________________________
@@ -134,10 +168,14 @@ MAIN 	PROC
 		SET_VIDEO_MODE
 		; SET_BACKGROUND_WHITE
 ;_____________________________TOOLS BAR___________________________________
-		COLOR_BAR	WHITE, WHITE_COL
-		COLOR_BAR	RED, RED_COL
-		COLOR_BAR	GREEN, GREEN_COL
+		COLOR_BAR	BLACK, BLACK_COL
 		COLOR_BAR	BLUE, BLUE_COL
+		COLOR_BAR	CYAN, CYAN_COL
+		COLOR_BAR	GREEN, GREEN_COL
+		COLOR_BAR   LIGHT_GREEN, LIGHT_GREEN_COL
+		COLOR_BAR	RED, RED_COL
+		COLOR_BAR	MAGENTA, MAGENTA_COL
+		COLOR_BAR	YELLOW, YELLOW_COL
 ;_____________________________DRAWING___________________________________
 
 		MOV AX,0000H
@@ -146,13 +184,13 @@ MAIN 	PROC
 		INT 33H
 		BACK: MOV AX,03H
 			  INT 33H
-			  CMP BX, 02H
-			  JE  ERASER
-		  GO: SET_COLOR
+			  CMP BX, 01H
+			  JNE  BACK
+		      SET_COLOR
 		      PAINT_PIXEL PENCIL
 			  jmp BACK
-	  ERASER: ERASE
-		      jmp GO
+	;   ERASER: ERASE
+	; 	      jmp GO
 		MOV AH,07
 		INT 21H
 
