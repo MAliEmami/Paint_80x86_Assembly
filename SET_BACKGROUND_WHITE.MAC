@@ -1,0 +1,8 @@
+SET_BACKGROUND_WHITE MACRO
+				 MOV AX,0600H
+	             MOV BH,WHITE
+				 MOV CX,0
+				 MOV DH,59
+	             MOV DL,79
+	             INT 10H
+ENDM
