@@ -61,8 +61,7 @@ ENDM
 ;____________________________________________________________________________
 SET_BACKGROUND_WHITE MACRO
 	                     MOV AH,0B
-	                     MOV BH,0
-	                     MOV BL,WHITE
+						 MOV BX,BLACKGROUND_ATT
 	                     INT 10H
 ENDM
 ;____________________________________________________________________________
@@ -343,6 +342,7 @@ ENDM
 	BAR_LINE_MARGIN EQU 10
 
 	WHITE           EQU 00001111B
+	BLACKGROUND_ATT	EQU 0700H
 
 	BLACK           EQU 00000000B
 	BLACK_COL       EQU 0
