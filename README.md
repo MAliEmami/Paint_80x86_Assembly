@@ -2,7 +2,7 @@
 This is a simple paint program written in x86 assembly language. It uses BIOS and DOS interrupts to handle graphics, mouse input, and screen manipulation. The program allows users to draw lines, erase pixels, clear screen and select colors from a menu.
 
 # Features
-- Color Menu: Choose from colors in color bar by clicking in the colors area.
+- Color Bar: Choose any colors in color bar by clicking in the colors area but you can't draw or erase the Color bar.
 
 - Line Tool: Draw lines between two points using the left mouse button.
 
