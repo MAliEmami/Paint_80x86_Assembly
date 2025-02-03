@@ -37,5 +37,9 @@ This is a simple paint program written in x86 assembly language. It uses BIOS an
   - DRAW_LINE
 
 - Main
+  - STACK SEGMENT
+  - DATA  SEGMENT
+  - CODE  SEGMENT
 
-# View ![image](https://github.com/user-attachments/assets/d144da92-3504-4b85-b3e9-2eb664a3cbcf)
+# View 
+![image](https://github.com/user-attachments/assets/d144da92-3504-4b85-b3e9-2eb664a3cbcf)
